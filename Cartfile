@@ -1,0 +1,5 @@
+github "pointfreeco/combine-schedulers" "0.6.0"
+github "pointfreeco/swift-case-paths" "0.8.0"
+github "pointfreeco/swift-custom-dump" "0.3.0"
+github "pointfreeco/swift-identified-collections" "0.3.2"
+git "git@github.com:ynieSalesforce/swift-identified-collections.git" "main"
