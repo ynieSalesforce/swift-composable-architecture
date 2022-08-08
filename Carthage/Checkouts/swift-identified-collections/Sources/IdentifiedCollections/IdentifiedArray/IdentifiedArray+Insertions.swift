@@ -14,20 +14,6 @@ extension IdentifiedArray {
     self.insert(item, at: self.endIndex)
   }
 
-  /// Append the contents of a sequence to the end of the set, excluding elements that are already
-  /// members.
-  ///
-  /// - Parameter elements: A finite sequence of elements to append.
-  /// - Complexity: The operation is expected to perform amortized O(1) copy, hash, and compare
-  ///   operations on the `Element` type, if it implements high-quality hashing.
-  @inlinable
-  public mutating func append<S>(contentsOf newElements: S)
-  where Element == S.Element, S: Sequence {
-    for element in newElements {
-      self.append(element)
-    }
-  }
-
   /// Insert a new member to this array at the specified index, if the array doesn't already contain
   /// it.
   ///

@@ -1,4 +1,3 @@
-@available(iOS 13, macOS 10.15, tvOS 13, watchOS 6, *)
 extension IdentifiedArray where Element: Identifiable, ID == Element.ID {
   /// Creates an empty array.
   ///
@@ -151,6 +150,10 @@ extension IdentifiedArray {
 // MARK: - Deprecations
 
 extension IdentifiedArray {
+  @available(*, unavailable, message: "use 'append(_:)' with each element to handle duplicates")
+  public mutating func append<S>(contentsOf newElements: S)
+  where Element == S.Element, S: Sequence {}
+
   @available(*, unavailable, message: "use 'insert(_:at:)' with each element to handle duplicates")
   public mutating func replaceSubrange<C>(_ subrange: Range<Index>, with newElements: C)
   where C: Collection, Self.Element == C.Element {}
