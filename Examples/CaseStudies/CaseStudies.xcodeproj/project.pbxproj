@@ -9,6 +9,12 @@
 /* Begin PBXBuildFile section */
 		433B8B762A49C9AF0035DEE4 /* 04-Navigation-Multiple-Destinations.swift in Sources */ = {isa = PBXBuildFile; fileRef = 433B8B752A49C9AF0035DEE4 /* 04-Navigation-Multiple-Destinations.swift */; };
 		4F5AC11F24ECC7E4009DC50B /* 02-GettingStarted-SharedStateInMemoryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F5AC11E24ECC7E4009DC50B /* 02-GettingStarted-SharedStateInMemoryTests.swift */; };
+		9B056FB72C0A5B8500240402 /* EpisodeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B056FB62C0A5B8500240402 /* EpisodeView.swift */; };
+		9B056FBA2C0A5BAC00240402 /* EpisodeStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B056FB92C0A5BAC00240402 /* EpisodeStore.swift */; };
+		9B056FBD2C0A5C7F00240402 /* EpisodesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B056FBC2C0A5C7E00240402 /* EpisodesView.swift */; };
+		9B056FBF2C0A5C9D00240402 /* EpisodesStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B056FBE2C0A5C9D00240402 /* EpisodesStore.swift */; };
+		9B056FC22C0A6A4500240402 /* FavoritingStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B056FC12C0A6A4500240402 /* FavoritingStore.swift */; };
+		9B056FC42C0A6C0B00240402 /* FavoriteButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B056FC32C0A6C0B00240402 /* FavoriteButton.swift */; };
 		CA0C51FB245389CC00A04EAB /* 05-HigherOrderReducers-ReusableOfflineDownloadsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA0C51FA245389CC00A04EAB /* 05-HigherOrderReducers-ReusableOfflineDownloadsTests.swift */; };
 		CA25E5D224463AD700DA666A /* 01-GettingStarted-Bindings-Basics.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA25E5D124463AD700DA666A /* 01-GettingStarted-Bindings-Basics.swift */; };
 		CA34170824A4E89500FAF950 /* 01-GettingStarted-AnimationsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA34170724A4E89500FAF950 /* 01-GettingStarted-AnimationsTests.swift */; };
@@ -154,6 +160,12 @@
 /* Begin PBXFileReference section */
 		433B8B752A49C9AF0035DEE4 /* 04-Navigation-Multiple-Destinations.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "04-Navigation-Multiple-Destinations.swift"; sourceTree = "<group>"; };
 		4F5AC11E24ECC7E4009DC50B /* 02-GettingStarted-SharedStateInMemoryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "02-GettingStarted-SharedStateInMemoryTests.swift"; sourceTree = "<group>"; };
+		9B056FB62C0A5B8500240402 /* EpisodeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EpisodeView.swift; sourceTree = "<group>"; };
+		9B056FB92C0A5BAC00240402 /* EpisodeStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EpisodeStore.swift; sourceTree = "<group>"; };
+		9B056FBC2C0A5C7E00240402 /* EpisodesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EpisodesView.swift; sourceTree = "<group>"; };
+		9B056FBE2C0A5C9D00240402 /* EpisodesStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EpisodesStore.swift; sourceTree = "<group>"; };
+		9B056FC12C0A6A4500240402 /* FavoritingStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoritingStore.swift; sourceTree = "<group>"; };
+		9B056FC32C0A6C0B00240402 /* FavoriteButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoriteButton.swift; sourceTree = "<group>"; };
 		CA0C51FA245389CC00A04EAB /* 05-HigherOrderReducers-ReusableOfflineDownloadsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "05-HigherOrderReducers-ReusableOfflineDownloadsTests.swift"; sourceTree = "<group>"; };
 		CA25E5D124463AD700DA666A /* 01-GettingStarted-Bindings-Basics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "01-GettingStarted-Bindings-Basics.swift"; sourceTree = "<group>"; };
 		CA34170724A4E89500FAF950 /* 01-GettingStarted-AnimationsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "01-GettingStarted-AnimationsTests.swift"; sourceTree = "<group>"; };
@@ -287,6 +299,44 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		9B056FB52C0A5AD500240402 /* ReusableFavorite */ = {
+			isa = PBXGroup;
+			children = (
+				9B056FC02C0A6A3400240402 /* Favoriting */,
+				9B056FBB2C0A5C7400240402 /* Episodes */,
+				9B056FB82C0A5B8800240402 /* Episode */,
+				DCC68EE22447C8540037F998 /* 05-HigherOrderReducers-ReusableFavoriting.swift */,
+			);
+			path = ReusableFavorite;
+			sourceTree = "<group>";
+		};
+		9B056FB82C0A5B8800240402 /* Episode */ = {
+			isa = PBXGroup;
+			children = (
+				9B056FB62C0A5B8500240402 /* EpisodeView.swift */,
+				9B056FB92C0A5BAC00240402 /* EpisodeStore.swift */,
+			);
+			path = Episode;
+			sourceTree = "<group>";
+		};
+		9B056FBB2C0A5C7400240402 /* Episodes */ = {
+			isa = PBXGroup;
+			children = (
+				9B056FBC2C0A5C7E00240402 /* EpisodesView.swift */,
+				9B056FBE2C0A5C9D00240402 /* EpisodesStore.swift */,
+			);
+			path = Episodes;
+			sourceTree = "<group>";
+		};
+		9B056FC02C0A6A3400240402 /* Favoriting */ = {
+			isa = PBXGroup;
+			children = (
+				9B056FC12C0A6A4500240402 /* FavoritingStore.swift */,
+				9B056FC32C0A6C0B00240402 /* FavoriteButton.swift */,
+			);
+			path = Favoriting;
+			sourceTree = "<group>";
+		};
 		CA6AC25F2451131C00C71CB3 /* 05-HigherOrderReducers-ResuableOfflineDownloads */ = {
 			isa = PBXGroup;
 			children = (
@@ -393,6 +443,7 @@
 		DC89C41524460F95006900B9 /* SwiftUICaseStudies */ = {
 			isa = PBXGroup;
 			children = (
+				9B056FB52C0A5AD500240402 /* ReusableFavorite */,
 				DC89C42424460F96006900B9 /* Info.plist */,
 				DC89C41A24460F95006900B9 /* 00-RootView.swift */,
 				CAE962FC24A7F7BE00EFC025 /* 01-GettingStarted-AlertsAndConfirmationDialogs.swift */,
@@ -421,7 +472,6 @@
 				DCC68EAA244666AF0037F998 /* 04-Navigation-Sheet-PresentAndLoad.swift */,
 				DC3C87AF29A48C4D004D9104 /* 04-NavigationStack.swift */,
 				DCE63B70245CC0B90080A23D /* 05-HigherOrderReducers-Recursion.swift */,
-				DCC68EE22447C8540037F998 /* 05-HigherOrderReducers-ReusableFavoriting.swift */,
 				DCFE195F278DBF0600C14CCF /* CaseStudiesApp.swift */,
 				CA5ECF91267A79F0002067FF /* FactClient.swift */,
 				DC89C41C24460F96006900B9 /* Assets.xcassets */,
@@ -746,6 +796,7 @@
 			files = (
 				DC3C87B029A48C4D004D9104 /* 04-NavigationStack.swift in Sources */,
 				DCC68EE12447C4630037F998 /* 01-GettingStarted-Composition-TwoCounters.swift in Sources */,
+				9B056FC22C0A6A4500240402 /* FavoritingStore.swift in Sources */,
 				DC072322244663B1003A8B65 /* 04-Navigation-Sheet-LoadThenPresent.swift in Sources */,
 				DC89C45324465452006900B9 /* 04-Navigation-Lists-NavigateAndLoad.swift in Sources */,
 				CACA7FBC2BC707F2002DF110 /* 02-SharedState-Notifications.swift in Sources */,
@@ -753,6 +804,7 @@
 				CA3E421F26B8337500581ABC /* 01-GettingStarted-FocusState.swift in Sources */,
 				DCC68EDF2447BC810037F998 /* TemplateText.swift in Sources */,
 				CA6AC2672451135C00C71CB3 /* DownloadClient.swift in Sources */,
+				9B056FBF2C0A5C9D00240402 /* EpisodesStore.swift in Sources */,
 				CADECDB62B5CA228009DC881 /* 02-SharedState-InMemory.swift in Sources */,
 				CAA9ADC624465C810003A984 /* 03-Effects-Cancellation.swift in Sources */,
 				CA5ECF92267A79F0002067FF /* FactClient.swift in Sources */,
@@ -760,9 +812,11 @@
 				CA6AC2652451135C00C71CB3 /* CircularProgressView.swift in Sources */,
 				CA6AC2642451135C00C71CB3 /* ReusableComponents-Download.swift in Sources */,
 				CADECDC02B5DE7C1009DC881 /* 02-SharedState-Onboarding.swift in Sources */,
+				9B056FB72C0A5B8500240402 /* EpisodeView.swift in Sources */,
 				DCFE1960278DBF0600C14CCF /* CaseStudiesApp.swift in Sources */,
 				DCD442C6286CA91F008B4EA7 /* AboutView.swift in Sources */,
 				CA6AC2662451135C00C71CB3 /* DownloadComponent.swift in Sources */,
+				9B056FBD2C0A5C7F00240402 /* EpisodesView.swift in Sources */,
 				DC5B505125C86EBC000D8DFD /* 01-GettingStarted-Bindings-Forms.swift in Sources */,
 				CADECDB82B5CA425009DC881 /* 02-SharedState-FileStorage.swift in Sources */,
 				CAA9ADC22446587C0003A984 /* 03-Effects-Basics.swift in Sources */,
@@ -771,6 +825,7 @@
 				CABC4F3926AEE00C00D5FA2C /* 03-Effects-Refreshable.swift in Sources */,
 				DC85EBC3285A731E00431CF3 /* ResignFirstResponder.swift in Sources */,
 				DCC68EAB244666AF0037F998 /* 04-Navigation-Sheet-PresentAndLoad.swift in Sources */,
+				9B056FC42C0A6C0B00240402 /* FavoriteButton.swift in Sources */,
 				433B8B762A49C9AF0035DEE4 /* 04-Navigation-Multiple-Destinations.swift in Sources */,
 				CAE962FD24A7F7BE00EFC025 /* 01-GettingStarted-AlertsAndConfirmationDialogs.swift in Sources */,
 				CA25E5D224463AD700DA666A /* 01-GettingStarted-Bindings-Basics.swift in Sources */,
@@ -778,6 +833,7 @@
 				DC89C44D244621A5006900B9 /* 04-Navigation-NavigateAndLoad.swift in Sources */,
 				DC89C4442446111B006900B9 /* 01-GettingStarted-Counter.swift in Sources */,
 				DCE63B71245CC0B90080A23D /* 05-HigherOrderReducers-Recursion.swift in Sources */,
+				9B056FBA2C0A5BAC00240402 /* EpisodeStore.swift in Sources */,
 				CAA9ADCA2446605B0003A984 /* 03-Effects-LongLiving.swift in Sources */,
 				DC89C45524465C44006900B9 /* 03-Effects-Timers.swift in Sources */,
 				CA410EE0247A15FE00E41798 /* 03-Effects-WebSocket.swift in Sources */,
