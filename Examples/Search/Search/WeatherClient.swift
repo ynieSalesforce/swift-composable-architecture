@@ -3,10 +3,10 @@ import Foundation
 
 // MARK: - API models
 
-struct Search: Decodable, Equatable {
+struct GeocodingSearch: Decodable, Equatable, Sendable {
   var results: [Result]
 
-  struct Result: Decodable, Equatable, Identifiable {
+  struct Result: Decodable, Equatable, Identifiable, Sendable {
     var country: String
     var latitude: Double
     var longitude: Double
@@ -16,17 +16,17 @@ struct Search: Decodable, Equatable {
   }
 }
 
-struct Forecast: Decodable, Equatable {
+struct Forecast: Decodable, Equatable, Sendable {
   var daily: Daily
   var dailyUnits: DailyUnits
 
-  struct Daily: Decodable, Equatable {
+  struct Daily: Decodable, Equatable, Sendable {
     var temperatureMax: [Double]
     var temperatureMin: [Double]
     var time: [Date]
   }
 
-  struct DailyUnits: Decodable, Equatable {
+  struct DailyUnits: Decodable, Equatable, Sendable {
     var temperatureMax: String
     var temperatureMin: String
   }
@@ -37,17 +37,32 @@ struct Forecast: Decodable, Equatable {
 // Typically this interface would live in its own module, separate from the live implementation.
 // This allows the search feature to compile faster since it only depends on the interface.
 
+@DependencyClient
 struct WeatherClient {
-  var forecast: (Search.Result) -> Effect<Forecast, Failure>
-  var search: (String) -> Effect<Search, Failure>
+  var forecast: @Sendable (_ location: GeocodingSearch.Result) async throws -> Forecast
+  var search: @Sendable (_ query: String) async throws -> GeocodingSearch
+}
 
-  struct Failure: Error, Equatable {}
+extension WeatherClient: TestDependencyKey {
+  static let previewValue = Self(
+    forecast: { _ in .mock },
+    search: { _ in .mock }
+  )
+
+  static let testValue = Self()
+}
+
+extension DependencyValues {
+  var weatherClient: WeatherClient {
+    get { self[WeatherClient.self] }
+    set { self[WeatherClient.self] = newValue }
+  }
 }
 
 // MARK: - Live API implementation
 
-extension WeatherClient {
-  static let live = WeatherClient(
+extension WeatherClient: DependencyKey {
+  static let liveValue = WeatherClient(
     forecast: { result in
       var components = URLComponents(string: "https://api.open-meteo.com/v1/forecast")!
       components.queryItems = [
@@ -57,33 +72,20 @@ extension WeatherClient {
         URLQueryItem(name: "timezone", value: TimeZone.autoupdatingCurrent.identifier),
       ]
 
-      return URLSession.shared.dataTaskPublisher(for: components.url!)
-        .map { data, _ in data }
-        .decode(type: Forecast.self, decoder: jsonDecoder)
-        .mapError { _ in Failure() }
-        .eraseToEffect()
+      let (data, _) = try await URLSession.shared.data(from: components.url!)
+      return try jsonDecoder.decode(Forecast.self, from: data)
     },
     search: { query in
       var components = URLComponents(string: "https://geocoding-api.open-meteo.com/v1/search")!
       components.queryItems = [URLQueryItem(name: "name", value: query)]
 
-      return URLSession.shared.dataTaskPublisher(for: components.url!)
-        .map { data, _ in data }
-        .decode(type: Search.self, decoder: jsonDecoder)
-        .mapError { _ in Failure() }
-        .eraseToEffect()
+      let (data, _) = try await URLSession.shared.data(from: components.url!)
+      return try jsonDecoder.decode(GeocodingSearch.self, from: data)
     }
   )
 }
 
-// MARK: - Mock API implementations
-
-extension WeatherClient {
-  static let unimplemented = Self(
-    forecast: { _ in .unimplemented("\(Self.self).forecast") },
-    search: { _ in .unimplemented("\(Self.self).search") }
-  )
-}
+// MARK: - Mock data
 
 extension Forecast {
   static let mock = Self(
@@ -96,10 +98,10 @@ extension Forecast {
   )
 }
 
-extension Search {
+extension GeocodingSearch {
   static let mock = Self(
     results: [
-      Search.Result(
+      GeocodingSearch.Result(
         country: "United States",
         latitude: 40.6782,
         longitude: -73.9442,
@@ -107,7 +109,7 @@ extension Search {
         name: "Brooklyn",
         admin1: nil
       ),
-      Search.Result(
+      GeocodingSearch.Result(
         country: "United States",
         latitude: 34.0522,
         longitude: -118.2437,
@@ -115,7 +117,7 @@ extension Search {
         name: "Los Angeles",
         admin1: nil
       ),
-      Search.Result(
+      GeocodingSearch.Result(
         country: "United States",
         latitude: 37.7749,
         longitude: -122.4194,

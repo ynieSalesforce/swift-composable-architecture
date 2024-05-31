@@ -2,31 +2,48 @@
 
 ## Topics
 
-### Creating a Test Store
+### Creating a test store
 
-- ``init(initialState:reducer:environment:file:line:)``
+- ``init(initialState:reducer:withDependencies:file:line:)-3zio1``
+- ``TestStoreOf``
 
-### Testing a Reducer
+### Configuring a test store
 
-- ``send(_:_:file:line:)``
-- ``receive(_:_:file:line:)``
+- ``dependencies``
+- ``exhaustivity``
+- ``timeout``
+- ``useMainSerialExecutor``
 
-### Controlling Dependencies
+### Testing a reducer
 
-Controlling a reducer's dependencies are a crucial part of building a reliable test suite. Mutating the environment provides a means of influencing a reducer's dependencies over the course of a test.
+- ``send(_:assert:file:line:)-2co21``
+- ``send(_:assert:file:line:)-1oopl``
+- ``send(_:_:assert:file:line:)``
+- ``receive(_:timeout:assert:file:line:)-6325h``
+- ``receive(_:_:timeout:assert:file:line:)-dkei``
+- ``receive(_:timeout:assert:file:line:)-5awso``
+- ``receive(_:timeout:assert:file:line:)-7md3m``
+- ``assert(_:file:line:)``
+- ``finish(timeout:file:line:)-53gi5``
+- ``isDismissed``
+- ``TestStoreTask``
 
-- ``environment``
+### Skipping actions and effects
 
-### Accessing State
+- ``skipReceivedActions(strict:file:line:)-a4ri``
+- ``skipInFlightEffects(strict:file:line:)-5hbsk``
 
-While the most common way of interacting with a test store's state is via its ``send(_:_:file:line:)`` and ``receive(_:_:file:line:)`` methods, you may also access it directly throughout a test.
+### Accessing state
+
+While the most common way of interacting with a test store's state is via its
+``send(_:assert:file:line:)-2co21`` and ``receive(_:timeout:assert:file:line:)-6325h`` methods, you
+may also access it directly throughout a test.
 
 - ``state``
 
-### Scoping a Test Store
+### Supporting types
 
-- ``scope(state:action:)``
-- ``scope(state:)``
+- ``TestStoreOf``
 
 ### Deprecations
 

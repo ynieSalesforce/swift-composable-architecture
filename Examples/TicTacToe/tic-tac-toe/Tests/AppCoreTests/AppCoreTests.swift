@@ -6,124 +6,78 @@ import NewGameCore
 import TwoFactorCore
 import XCTest
 
-class AppCoreTests: XCTestCase {
-  func testIntegration() {
-    var authenticationClient = AuthenticationClient.unimplemented
-    authenticationClient.login = { _ in
-      Effect(value: AuthenticationResponse(token: "deadbeef", twoFactorRequired: false))
+final class AppCoreTests: XCTestCase {
+  @MainActor
+  func testIntegration() async {
+    let store = TestStore(initialState: TicTacToe.State.login(Login.State())) {
+      TicTacToe.body
+    } withDependencies: {
+      $0.authenticationClient.login = { @Sendable _, _ in
+        AuthenticationResponse(token: "deadbeef", twoFactorRequired: false)
+      }
     }
-    let store = TestStore(
-      initialState: AppState(),
-      reducer: appReducer,
-      environment: AppEnvironment(
-        authenticationClient: authenticationClient,
-        mainQueue: .immediate
-      )
-    )
 
-    store.send(.login(.emailChanged("blob@pointfree.co"))) {
-      try (/AppState.login).modify(&$0) {
-        $0.email = "blob@pointfree.co"
-      }
+    await store.send(\.login.view.binding.email, "blob@pointfree.co") {
+      $0.login?.email = "blob@pointfree.co"
     }
-    store.send(.login(.passwordChanged("bl0bbl0b"))) {
-      try (/AppState.login).modify(&$0) {
-        $0.password = "bl0bbl0b"
-        $0.isFormValid = true
-      }
+    await store.send(\.login.view.binding.password, "bl0bbl0b") {
+      $0.login?.password = "bl0bbl0b"
+      $0.login?.isFormValid = true
     }
-    store.send(.login(.loginButtonTapped)) {
-      try (/AppState.login).modify(&$0) {
-        $0.isLoginRequestInFlight = true
-      }
+    await store.send(\.login.view.loginButtonTapped) {
+      $0.login?.isLoginRequestInFlight = true
     }
-    store.receive(
-      .login(
-        .loginResponse(
-          .success(AuthenticationResponse(token: "deadbeef", twoFactorRequired: false))
-        )
-      )
-    ) {
-      $0 = .newGame(NewGameState())
+    await store.receive(\.login.loginResponse.success) {
+      $0 = .newGame(NewGame.State())
     }
-    store.send(.newGame(.oPlayerNameChanged("Blob Sr."))) {
-      try (/AppState.newGame).modify(&$0) {
-        $0.oPlayerName = "Blob Sr."
-      }
+    await store.send(\.newGame.binding.oPlayerName, "Blob Sr.") {
+      $0.newGame?.oPlayerName = "Blob Sr."
     }
-    store.send(.newGame(.logoutButtonTapped)) {
-      $0 = .login(LoginState())
+    await store.send(\.newGame.logoutButtonTapped) {
+      $0 = .login(Login.State())
     }
   }
 
-  func testIntegration_TwoFactor() {
-    var authenticationClient = AuthenticationClient.unimplemented
-    authenticationClient.login = { _ in
-      Effect(value: AuthenticationResponse(token: "deadbeef", twoFactorRequired: true))
-    }
-    authenticationClient.twoFactor = { _ in
-      Effect(value: AuthenticationResponse(token: "deadbeef", twoFactorRequired: false))
-    }
-    let store = TestStore(
-      initialState: AppState(),
-      reducer: appReducer,
-      environment: AppEnvironment(
-        authenticationClient: authenticationClient,
-        mainQueue: .immediate
-      )
-    )
-
-    store.send(.login(.emailChanged("blob@pointfree.co"))) {
-      try (/AppState.login).modify(&$0) {
-        $0.email = "blob@pointfree.co"
+  @MainActor
+  func testIntegration_TwoFactor() async {
+    let store = TestStore(initialState: TicTacToe.State.login(Login.State())) {
+      TicTacToe.body
+    } withDependencies: {
+      $0.authenticationClient.login = { @Sendable _, _ in
+        AuthenticationResponse(token: "deadbeef", twoFactorRequired: true)
+      }
+      $0.authenticationClient.twoFactor = { @Sendable _, _ in
+        AuthenticationResponse(token: "deadbeef", twoFactorRequired: false)
       }
     }
 
-    store.send(.login(.passwordChanged("bl0bbl0b"))) {
-      try (/AppState.login).modify(&$0) {
-        $0.password = "bl0bbl0b"
-        $0.isFormValid = true
-      }
+    await store.send(\.login.view.binding.email, "blob@pointfree.co") {
+      $0.login?.email = "blob@pointfree.co"
     }
 
-    store.send(.login(.loginButtonTapped)) {
-      try (/AppState.login).modify(&$0) {
-        $0.isLoginRequestInFlight = true
-      }
-    }
-    store.receive(
-      .login(
-        .loginResponse(.success(AuthenticationResponse(token: "deadbeef", twoFactorRequired: true)))
-      )
-    ) {
-      try (/AppState.login).modify(&$0) {
-        $0.isLoginRequestInFlight = false
-        $0.twoFactor = TwoFactorState(token: "deadbeef")
-      }
+    await store.send(\.login.view.binding.password, "bl0bbl0b") {
+      $0.login?.password = "bl0bbl0b"
+      $0.login?.isFormValid = true
     }
 
-    store.send(.login(.twoFactor(.codeChanged("1234")))) {
-      try (/AppState.login).modify(&$0) {
-        $0.twoFactor?.code = "1234"
-        $0.twoFactor?.isFormValid = true
-      }
+    await store.send(\.login.view.loginButtonTapped) {
+      $0.login?.isLoginRequestInFlight = true
+    }
+    await store.receive(\.login.loginResponse.success) {
+      $0.login?.isLoginRequestInFlight = false
+      $0.login?.twoFactor = TwoFactor.State(token: "deadbeef")
     }
 
-    store.send(.login(.twoFactor(.submitButtonTapped))) {
-      try (/AppState.login).modify(&$0) {
-        $0.twoFactor?.isTwoFactorRequestInFlight = true
-      }
+    await store.send(\.login.twoFactor.view.binding.code, "1234") {
+      $0.login?.twoFactor?.code = "1234"
+      $0.login?.twoFactor?.isFormValid = true
     }
-    store.receive(
-      .login(
-        .twoFactor(
-          .twoFactorResponse(
-            .success(AuthenticationResponse(token: "deadbeef", twoFactorRequired: false))
-          )
-        )
-      )
-    ) {
-      $0 = .newGame(NewGameState())
+
+    await store.send(\.login.twoFactor.view.submitButtonTapped) {
+      $0.login?.twoFactor?.isTwoFactorRequestInFlight = true
+    }
+    await store.receive(\.login.twoFactor.twoFactorResponse.success) {
+      $0 = .newGame(NewGame.State())
     }
   }
 }

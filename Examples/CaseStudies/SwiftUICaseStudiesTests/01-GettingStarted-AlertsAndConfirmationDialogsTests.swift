@@ -1,59 +1,65 @@
-import Combine
 import ComposableArchitecture
-import SwiftUI
 import XCTest
 
 @testable import SwiftUICaseStudies
 
-class AlertsAndConfirmationDialogsTests: XCTestCase {
-  func testAlert() {
-    let store = TestStore(
-      initialState: AlertAndConfirmationDialogState(),
-      reducer: alertAndConfirmationDialogReducer,
-      environment: AlertAndConfirmationDialogEnvironment()
-    )
-
-    store.send(.alertButtonTapped) {
-      $0.alert = AlertState(
-        title: TextState("Alert!"),
-        message: TextState("This is an alert"),
-        primaryButton: .cancel(TextState("Cancel")),
-        secondaryButton: .default(TextState("Increment"), action: .send(.incrementButtonTapped))
-      )
+final class AlertsAndConfirmationDialogsTests: XCTestCase {
+  @MainActor
+  func testAlert() async {
+    let store = TestStore(initialState: AlertAndConfirmationDialog.State()) {
+      AlertAndConfirmationDialog()
     }
-    store.send(.incrementButtonTapped) {
-      $0.alert = AlertState(title: TextState("Incremented!"))
+
+    await store.send(.alertButtonTapped) {
+      $0.alert = AlertState {
+        TextState("Alert!")
+      } actions: {
+        ButtonState(role: .cancel) {
+          TextState("Cancel")
+        }
+        ButtonState(action: .incrementButtonTapped) {
+          TextState("Increment")
+        }
+      } message: {
+        TextState("This is an alert")
+      }
+    }
+    await store.send(\.alert.incrementButtonTapped) {
+      $0.alert = AlertState { TextState("Incremented!") }
       $0.count = 1
     }
-    store.send(.alertDismissed) {
+    await store.send(\.alert.dismiss) {
       $0.alert = nil
     }
   }
 
-  func testConfirmationDialog() {
-    let store = TestStore(
-      initialState: AlertAndConfirmationDialogState(),
-      reducer: alertAndConfirmationDialogReducer,
-      environment: AlertAndConfirmationDialogEnvironment()
-    )
+  @MainActor
+  func testConfirmationDialog() async {
+    let store = TestStore(initialState: AlertAndConfirmationDialog.State()) {
+      AlertAndConfirmationDialog()
+    }
 
-    store.send(.confirmationDialogButtonTapped) {
-      $0.confirmationDialog = ConfirmationDialogState(
-        title: TextState("Confirmation dialog"),
-        message: TextState("This is a confirmation dialog."),
-        buttons: [
-          .cancel(TextState("Cancel")),
-          .default(TextState("Increment"), action: .send(.incrementButtonTapped)),
-          .default(TextState("Decrement"), action: .send(.decrementButtonTapped)),
-        ]
-      )
+    await store.send(.confirmationDialogButtonTapped) {
+      $0.confirmationDialog = ConfirmationDialogState {
+        TextState("Confirmation dialog")
+      } actions: {
+        ButtonState(role: .cancel) {
+          TextState("Cancel")
+        }
+        ButtonState(action: .incrementButtonTapped) {
+          TextState("Increment")
+        }
+        ButtonState(action: .decrementButtonTapped) {
+          TextState("Decrement")
+        }
+      } message: {
+        TextState("This is a confirmation dialog.")
+      }
     }
-    store.send(.incrementButtonTapped) {
-      $0.alert = AlertState(title: TextState("Incremented!"))
-      $0.count = 1
-    }
-    store.send(.confirmationDialogDismissed) {
+    await store.send(\.confirmationDialog.incrementButtonTapped) {
+      $0.alert = AlertState { TextState("Incremented!") }
       $0.confirmationDialog = nil
+      $0.count = 1
     }
   }
 }

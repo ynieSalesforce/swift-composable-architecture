@@ -6,14 +6,9 @@ struct SpeechRecognitionApp: App {
   var body: some Scene {
     WindowGroup {
       SpeechRecognitionView(
-        store: Store(
-          initialState: AppState(),
-          reducer: appReducer,
-          environment: AppEnvironment(
-            mainQueue: .main,
-            speechClient: .live
-          )
-        )
+        store: Store(initialState: SpeechRecognition.State()) {
+          SpeechRecognition()._printChanges()
+        }
       )
     }
   }

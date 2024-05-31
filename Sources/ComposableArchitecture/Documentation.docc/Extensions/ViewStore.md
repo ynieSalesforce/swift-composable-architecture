@@ -2,37 +2,34 @@
 
 ## Topics
 
-### Creating a View Store
+### Creating a view store
 
-<!--NB: DocC bug prevents the following from being resolved-->
-<!--- ``init(_:)``-->
-- ``init(_:removeDuplicates:)``
+- ``init(_:observe:send:removeDuplicates:)-9mg12``
+- ``init(_:observe:removeDuplicates:)-4f9j5``
+- ``init(_:observe:send:)-1m32f``
+- ``init(_:observe:)-3ak1y``
+- ``ViewStoreOf``
 
-### Accessing State
+### Accessing state
 
-- ``state``
+- ``state-swift.property``
 - ``subscript(dynamicMember:)-kwxk``
 
-### Sending Actions
+### Sending actions
 
 - ``send(_:)``
-
-### Interacting with Concurrency
-
 - ``send(_:while:)``
 - ``yield(while:)``
 
-### SwiftUI Integration
+### SwiftUI integration
 
 - ``send(_:animation:)``
 - ``send(_:animation:while:)``
-- ``binding(get:send:)-65xes``
-- ``binding(get:send:)-l66r``
-- ``binding(send:)-7nwak``
-- ``binding(send:)-705m7``
-<!--NB: DocC bug prevents the following from being resolved-->
-<!--- ``objectWillChange``-->
-
-### Deprecations
-
-- <doc:ViewStoreDeprecations>
+- ``send(_:transaction:)``
+- <doc:Bindings>
+- ``objectWillChange-5oies``
+- ``init(_:observe:send:removeDuplicates:)-9v9l0``
+- ``init(_:observe:removeDuplicates:)-81c6d``
+- ``init(_:observe:send:)-4hzhi``
+- ``init(_:observe:)-96hm5``
+- ``subscript(dynamicMember:)-3q4xh``

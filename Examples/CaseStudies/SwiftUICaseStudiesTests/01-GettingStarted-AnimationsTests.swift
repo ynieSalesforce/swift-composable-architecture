@@ -1,102 +1,103 @@
-import Combine
+import Clocks
 import ComposableArchitecture
 import XCTest
 
 @testable import SwiftUICaseStudies
 
-class AnimationTests: XCTestCase {
-  func testRainbow() {
-    let mainQueue = DispatchQueue.test
+final class AnimationTests: XCTestCase {
+  @MainActor
+  func testRainbow() async {
+    let clock = TestClock()
 
-    let store = TestStore(
-      initialState: AnimationsState(),
-      reducer: animationsReducer,
-      environment: AnimationsEnvironment(
-        mainQueue: mainQueue.eraseToAnyScheduler()
-      )
-    )
+    let store = TestStore(initialState: Animations.State()) {
+      Animations()
+    } withDependencies: {
+      $0.continuousClock = clock
+    }
 
-    store.send(.rainbowButtonTapped)
-
-    store.receive(.setColor(.red)) {
+    await store.send(.rainbowButtonTapped)
+    await store.receive(\.setColor) {
       $0.circleColor = .red
     }
 
-    mainQueue.advance(by: .seconds(1))
-    store.receive(.setColor(.blue)) {
+    await clock.advance(by: .seconds(1))
+    await store.receive(\.setColor) {
       $0.circleColor = .blue
     }
 
-    mainQueue.advance(by: .seconds(1))
-    store.receive(.setColor(.green)) {
+    await clock.advance(by: .seconds(1))
+    await store.receive(\.setColor) {
       $0.circleColor = .green
     }
 
-    mainQueue.advance(by: .seconds(1))
-    store.receive(.setColor(.orange)) {
+    await clock.advance(by: .seconds(1))
+    await store.receive(\.setColor) {
       $0.circleColor = .orange
     }
 
-    mainQueue.advance(by: .seconds(1))
-    store.receive(.setColor(.pink)) {
+    await clock.advance(by: .seconds(1))
+    await store.receive(\.setColor) {
       $0.circleColor = .pink
     }
 
-    mainQueue.advance(by: .seconds(1))
-    store.receive(.setColor(.purple)) {
+    await clock.advance(by: .seconds(1))
+    await store.receive(\.setColor) {
       $0.circleColor = .purple
     }
 
-    mainQueue.advance(by: .seconds(1))
-    store.receive(.setColor(.yellow)) {
+    await clock.advance(by: .seconds(1))
+    await store.receive(\.setColor) {
       $0.circleColor = .yellow
     }
 
-    mainQueue.advance(by: .seconds(1))
-    store.receive(.setColor(.black)) {
+    await clock.advance(by: .seconds(1))
+    await store.receive(\.setColor) {
       $0.circleColor = .black
     }
 
-    mainQueue.run()
+    await clock.run()
   }
 
-  func testReset() {
-    let mainQueue = DispatchQueue.test
+  @MainActor
+  func testReset() async {
+    let clock = TestClock()
 
-    let store = TestStore(
-      initialState: AnimationsState(),
-      reducer: animationsReducer,
-      environment: AnimationsEnvironment(
-        mainQueue: mainQueue.eraseToAnyScheduler()
-      )
-    )
+    let store = TestStore(initialState: Animations.State()) {
+      Animations()
+    } withDependencies: {
+      $0.continuousClock = clock
+    }
 
-    store.send(.rainbowButtonTapped)
-
-    store.receive(.setColor(.red)) {
+    await store.send(.rainbowButtonTapped)
+    await store.receive(\.setColor) {
       $0.circleColor = .red
     }
 
-    mainQueue.advance(by: .seconds(1))
-    store.receive(.setColor(.blue)) {
+    await clock.advance(by: .seconds(1))
+    await store.receive(\.setColor) {
       $0.circleColor = .blue
     }
 
-    store.send(.resetButtonTapped) {
-      $0.alert = AlertState(
-        title: TextState("Reset state?"),
-        primaryButton: .destructive(
-          TextState("Reset"),
+    await store.send(.resetButtonTapped) {
+      $0.alert = AlertState {
+        TextState("Reset state?")
+      } actions: {
+        ButtonState(
+          role: .destructive,
           action: .send(.resetConfirmationButtonTapped, animation: .default)
-        ),
-        secondaryButton: .cancel(TextState("Cancel"))
-      )
+        ) {
+          TextState("Reset")
+        }
+        ButtonState(role: .cancel) {
+          TextState("Cancel")
+        }
+      }
     }
 
-    store.send(.resetConfirmationButtonTapped) {
-      $0 = AnimationsState()
+    await store.send(\.alert.resetConfirmationButtonTapped) {
+      $0 = Animations.State()
     }
 
-    mainQueue.run()
+    await store.finish()
   }
 }

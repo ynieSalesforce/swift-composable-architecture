@@ -3,68 +3,72 @@ import Combine
 import ComposableArchitecture
 import Dispatch
 
-public struct TwoFactorState: Equatable {
-  public var alert: AlertState<TwoFactorAction>?
-  public var code = ""
-  public var isFormValid = false
-  public var isTwoFactorRequestInFlight = false
-  public let token: String
+@Reducer
+public struct TwoFactor: Sendable {
+  @ObservableState
+  public struct State: Equatable {
+    @Presents public var alert: AlertState<Action.Alert>?
+    public var code = ""
+    public var isFormValid = false
+    public var isTwoFactorRequestInFlight = false
+    public let token: String
 
-  public init(token: String) {
-    self.token = token
+    public init(token: String) {
+      self.token = token
+    }
   }
-}
 
-public enum TwoFactorAction: Equatable {
-  case alertDismissed
-  case codeChanged(String)
-  case submitButtonTapped
-  case twoFactorResponse(Result<AuthenticationResponse, AuthenticationError>)
-}
+  public enum Action: Sendable, ViewAction {
+    case alert(PresentationAction<Alert>)
+    case twoFactorResponse(Result<AuthenticationResponse, Error>)
+    case view(View)
 
-public enum TwoFactorTearDownToken {}
+    public enum Alert: Equatable, Sendable {}
 
-public struct TwoFactorEnvironment {
-  public var authenticationClient: AuthenticationClient
-  public var mainQueue: AnySchedulerOf<DispatchQueue>
-
-  public init(
-    authenticationClient: AuthenticationClient,
-    mainQueue: AnySchedulerOf<DispatchQueue>
-  ) {
-    self.authenticationClient = authenticationClient
-    self.mainQueue = mainQueue
+    @CasePathable
+    public enum View: BindableAction, Sendable {
+      case binding(BindingAction<State>)
+      case submitButtonTapped
+    }
   }
-}
 
-public let twoFactorReducer = Reducer<TwoFactorState, TwoFactorAction, TwoFactorEnvironment> {
-  state, action, environment in
+  @Dependency(\.authenticationClient) var authenticationClient
 
-  switch action {
-  case .alertDismissed:
-    state.alert = nil
-    return .none
+  public init() {}
 
-  case let .codeChanged(code):
-    state.code = code
-    state.isFormValid = code.count >= 4
-    return .none
+  public var body: some ReducerOf<Self> {
+    BindingReducer(action: \.view)
+    Reduce { state, action in
+      switch action {
+      case .alert:
+        return .none
 
-  case .submitButtonTapped:
-    state.isTwoFactorRequestInFlight = true
-    return environment.authenticationClient
-      .twoFactor(TwoFactorRequest(code: state.code, token: state.token))
-      .receive(on: environment.mainQueue)
-      .catchToEffect(TwoFactorAction.twoFactorResponse)
-      .cancellable(id: TwoFactorTearDownToken.self)
+      case let .twoFactorResponse(.failure(error)):
+        state.alert = AlertState { TextState(error.localizedDescription) }
+        state.isTwoFactorRequestInFlight = false
+        return .none
 
-  case let .twoFactorResponse(.failure(error)):
-    state.alert = AlertState(title: TextState(error.localizedDescription))
-    state.isTwoFactorRequestInFlight = false
-    return .none
+      case .twoFactorResponse(.success):
+        state.isTwoFactorRequestInFlight = false
+        return .none
 
-  case let .twoFactorResponse(.success(response)):
-    state.isTwoFactorRequestInFlight = false
-    return .none
+      case .view(.binding):
+        state.isFormValid = state.code.count >= 4
+        return .none
+
+      case .view(.submitButtonTapped):
+        state.isTwoFactorRequestInFlight = true
+        return .run { [code = state.code, token = state.token] send in
+          await send(
+            .twoFactorResponse(
+              await Result {
+                try await self.authenticationClient.twoFactor(code: code, token: token)
+              }
+            )
+          )
+        }
+      }
+    }
+    .ifLet(\.$alert, action: \.alert)
   }
 }

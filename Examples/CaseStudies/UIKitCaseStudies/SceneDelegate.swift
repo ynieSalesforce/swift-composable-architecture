@@ -1,4 +1,3 @@
-import SwiftUI
 import UIKit
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
@@ -9,7 +8,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     willConnectTo session: UISceneSession,
     options connectionOptions: UIScene.ConnectionOptions
   ) {
-    self.window = (scene as? UIWindowScene).map(UIWindow.init(windowScene:))
+    self.window = (scene as? UIWindowScene).map { UIWindow(windowScene: $0) }
     self.window?.rootViewController = UINavigationController(
       rootViewController: RootViewController())
     self.window?.makeKeyAndVisible()
