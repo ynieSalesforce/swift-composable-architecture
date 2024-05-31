@@ -6,19 +6,19 @@
 //  Copyright © 2024 Point-Free. All rights reserved.
 //
 
-import Foundation
 import ComposableArchitecture
+import Foundation
 import SwiftUI
 
 struct EpisodeView: View {
   let store: StoreOf<EpisodeStore>
-  
+
   var body: some View {
     HStack(alignment: .firstTextBaseline) {
       Text(store.title)
-      
+
       Spacer()
-      
+
       FavoriteButton(store: self.store.scope(state: \.favorite, action: \.favorite))
     }
   }

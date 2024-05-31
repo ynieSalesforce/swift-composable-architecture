@@ -159,7 +159,7 @@ precedencegroup CasePathCompositionPrecedence {
   associativity: right
 }
 
-infix operator ..: CasePathCompositionPrecedence
+infix operator .. : CasePathCompositionPrecedence
 
 extension CasePath {
   /// Returns a new case path created by appending the given case path to this one.
