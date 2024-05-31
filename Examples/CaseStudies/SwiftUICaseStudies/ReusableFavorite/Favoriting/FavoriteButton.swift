@@ -6,13 +6,13 @@
 //  Copyright © 2024 Point-Free. All rights reserved.
 //
 
+import ComposableArchitecture
 import Foundation
 import SwiftUI
-import ComposableArchitecture
 
 struct FavoriteButton<ID: Hashable & Sendable>: View {
   let store: StoreOf<FavoritingStore<ID>>
-  
+
   var body: some View {
     Button {
       store.send(.buttonTapped)

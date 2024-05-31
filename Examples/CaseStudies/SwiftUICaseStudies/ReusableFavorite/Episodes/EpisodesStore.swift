@@ -6,8 +6,8 @@
 //  Copyright © 2024 Point-Free. All rights reserved.
 //
 
-import Foundation
 import ComposableArchitecture
+import Foundation
 
 @Reducer
 struct EpisodesStore {
@@ -15,16 +15,16 @@ struct EpisodesStore {
   struct State: Equatable {
     var episodes: IdentifiedArrayOf<EpisodeStore.State> = []
   }
-  
+
   enum Action {
     case episodes(IdentifiedActionOf<EpisodeStore>)
   }
-  
+
   var favorite: @Sendable (UUID, Bool) async throws -> Bool = favoriteRequest
-  
+
   var body: some Reducer<State, Action> {
     Reduce { state, action in
-        .none
+      .none
     }
     .forEach(\.episodes, action: \.episodes) {
       EpisodeStore(favorite: self.favorite)
