@@ -13,11 +13,11 @@ import ComposableArchitecture
 struct EpisodesStore {
   @ObservableState
   struct State: Equatable {
-    var episodes: IdentifiedArrayOf<EpisodeStore.State> = []
+    var episodesState: IdentifiedArrayOf<EpisodeStore.State> = []
   }
   
   enum Action {
-    case episodes(IdentifiedActionOf<EpisodeStore>)
+    case episodesAction(IdentifiedActionOf<EpisodeStore>)
   }
   
   var favorite: @Sendable (UUID, Bool) async throws -> Bool = favoriteRequest
@@ -26,7 +26,7 @@ struct EpisodesStore {
     Reduce { state, action in
         .none
     }
-    .forEach(\.episodes, action: \.episodes) {
+    .forEach(\.episodesState, action: \.episodesAction) {
       EpisodeStore(favorite: self.favorite)
     }
   }

@@ -35,7 +35,7 @@ struct EpisodesView: View {
         AboutView(readMe: readMe)
       }
       ForEach(
-        store.scope(state: \.episodes, action: \.episodes),
+        store.scope(state: \.episodesState, action: \.episodesAction),
         id: \.state.id
       ) { rowStore in
         EpisodeView(store: rowStore)

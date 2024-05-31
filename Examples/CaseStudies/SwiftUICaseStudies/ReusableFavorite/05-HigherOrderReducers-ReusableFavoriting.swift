@@ -21,7 +21,7 @@ extension IdentifiedArray where ID == EpisodeStore.State.ID, Element == EpisodeS
 #Preview {
   NavigationStack {
     EpisodesView(
-      store: Store(initialState: EpisodesStore.State(episodes: .mocks)) {
+      store: Store(initialState: EpisodesStore.State(episodesState: .mocks)) {
         EpisodesStore()
       }
     )
